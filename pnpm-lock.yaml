@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@mind-elixir/node-menu':
+        specifier: ^5.0.0
+        version: 5.0.0(mind-elixir@5.0.6)
       '@radix-ui/react-aspect-ratio':
         specifier: ^1.1.7
         version: 1.1.7(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -44,6 +47,9 @@ importers:
       lucide-react:
         specifier: ^0.542.0
         version: 0.542.0(react@19.1.0)
+      mind-elixir:
+        specifier: ^5.0.6
+        version: 5.0.6
       next:
         specifier: 15.5.2
         version: 15.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -340,6 +346,11 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.30':
     resolution: {integrity: sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q==}
+
+  '@mind-elixir/node-menu@5.0.0':
+    resolution: {integrity: sha512-fpKMhcKTIl0/L0ghsltbodv8EGw87uExloqwHGRJLF4IO/NfKrteVjq3Kd1B8gf7UqkQAigMV6LxS4XKSS3ESw==}
+    peerDependencies:
+      mind-elixir: '>5.0.0'
 
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
@@ -1854,6 +1865,9 @@ packages:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
 
+  mind-elixir@5.0.6:
+    resolution: {integrity: sha512-1dRpnLC4m+/OAG28MSRL6TnaWvNtnvsEWE0UirbG3YYjWKEFxsnapR0V1Hy+azjmHVHYFHIh8t+rV1OqxTd5dA==}
+
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
 
@@ -2565,6 +2579,10 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@mind-elixir/node-menu@5.0.0(mind-elixir@5.0.6)':
+    dependencies:
+      mind-elixir: 5.0.6
 
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
@@ -4158,6 +4176,8 @@ snapshots:
     dependencies:
       braces: 3.0.3
       picomatch: 2.3.1
+
+  mind-elixir@5.0.6: {}
 
   minimatch@3.1.2:
     dependencies:
