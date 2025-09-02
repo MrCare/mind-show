@@ -18,6 +18,8 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "src/generated/**",
+      "prisma/generated/**",
     ],
   },
   {
@@ -28,6 +30,14 @@ const eslintConfig = [
       "@typescript-eslint/no-unused-vars": "off",
       // 允许在某些情况下缺少依赖项
       "react-hooks/exhaustive-deps": "warn",
+      // 允许 require 导入（主要用于 Prisma 生成的文件）
+      "@typescript-eslint/no-require-imports": "off",
+      // 允许未使用的表达式（主要用于生成的代码）
+      "@typescript-eslint/no-unused-expressions": "off",
+      // 禁用 display name 检查（对于 forwardRef 组件）
+      "react/display-name": "off",
+      // 允许未转义的实体字符
+      "react/no-unescaped-entities": "off",
     },
   },
 ];

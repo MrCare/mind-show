@@ -1,21 +1,34 @@
 'use client';
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import MindElixir from "mind-elixir";
 import "mind-elixir/style";
 
-const MindMap = () => {
+export interface MindMapRef {
+  getInstance: () => any;
+}
+
+interface MindMapProps {
+  onInstanceReady?: (instance: any) => void;
+}
+
+const MindMap = forwardRef<MindMapRef, MindMapProps>(({ onInstanceReady }, ref) => {
   const me = useRef<any>(null);
+
+  useImperativeHandle(ref, () => ({
+    getInstance: () => me.current
+  }));
 
   // 初始化思维导图
   useEffect(() => {
     const instance = new MindElixir({
       el: "#mind-map",
-      direction: MindElixir.SIDE,
+      direction: MindElixir.RIGHT,
       draggable: true,
       contextMenu: true,
       toolBar: true,
       nodeMenu: true,
       keypress: true,
+      expanded: true
     });
     
     // 创建示例思维导图数据
@@ -63,17 +76,25 @@ const MindMap = () => {
     
     instance.init(exampleData);
     me.current = instance;
-  }, []);
+    
+    // 通知父组件实例已准备好
+    if (onInstanceReady) {
+      onInstanceReady(instance);
+    }    
+    console.log("MindElixir instance:", instance.getDataString());
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div 
       id="mind-map" 
       style={{ 
-        height: "calc(100vh - 128px)", 
-        width: "100%" 
+        height: "calc(100vh - 96px)", 
+        width: "calc(50vw - 32px)" 
       }} 
     />
   );
-};
+});
+
+// MindMap.displayName = 'MindMap';
 
 export default MindMap;
