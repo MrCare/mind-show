@@ -4,7 +4,7 @@
  * @Date: 2025-07-16 14:11:12
  */
 import dynamic from 'next/dynamic';
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -37,7 +37,8 @@ const loadingState = {
   isLoading: false
 };
 
-export default function Home() {
+// 带有搜索参数的主要内容组件
+const HomeContent: React.FC = () => {
   const mindMapRef = useRef<MindMapRef>(null);
   const [mindMapInstance, setMindMapInstance] = useState<any>(null);
   const [initialData, setInitialData] = useState<any>(null);
@@ -96,7 +97,7 @@ export default function Home() {
   }, [searchParams]);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <>
       <DynamicNavigator />
       <LoadingOverlay isLoading={isLoading} />
       
@@ -115,6 +116,28 @@ export default function Home() {
           <MindMapPreview mindMapInstance={mindMapInstance} />
         </div>
       </div>
+    </>
+  );
+};
+
+export default function Home() {
+  return (
+    <div className="h-screen flex flex-col overflow-hidden">
+      <Suspense fallback={
+        <div className="h-screen flex flex-col overflow-hidden">
+          <NavigatorSkeleton />
+          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            <div className="flex-1 flex overflow-hidden">
+              <MindMapSkeleton />
+            </div>
+            <div className="w-full lg:w-1/2 bg-white dark:bg-gray-900 flex flex-col overflow-hidden p-4">
+              <MindMapPreviewSkeleton />
+            </div>
+          </div>
+        </div>
+      }>
+        <HomeContent />
+      </Suspense>
     </div>
   );
 }
