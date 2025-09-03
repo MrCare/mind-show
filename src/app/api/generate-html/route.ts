@@ -1,106 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { generatePresentationHTML, validateMindMapData } from '@/lib/html-templates/presentation-generator';
 
 export async function POST(request: NextRequest) {
   try {
-    const { mindData, address } = await request.json();
+    const { mindData, address, previewMode = false, updateId } = await request.json();
 
-    if (!mindData || !mindData.nodeData) {
+    // 验证思维导图数据
+    if (!validateMindMapData(mindData)) {
       return NextResponse.json(
         { error: 'Invalid mind map data' },
         { status: 400 }
       );
     }
 
-    // 将思维导图数据转换为HTML的函数
-    const convertMindDataToHTML = (data: any): string => {
-      const generateNodeHTML = (node: any, level: number = 0): string => {
-        const indent = '  '.repeat(level);
-        const tag = level === 0 ? 'h1' : level === 1 ? 'h2' : level === 2 ? 'h3' : 'h4';
-        
-        let html = `${indent}<${tag}>${node.topic}</${tag}>\n`;
-        
-        if (node.children && node.children.length > 0) {
-          html += `${indent}<ul>\n`;
-          node.children.forEach((child: any) => {
-            html += `${indent}  <li>\n`;
-            html += generateNodeHTML(child, level + 1);
-            html += `${indent}  </li>\n`;
-          });
-          html += `${indent}</ul>\n`;
-        }
-        
-        return html;
-      };
-
-      const bodyContent = generateNodeHTML(data.nodeData);
-      
-      return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${data.nodeData.topic || 'Mind Map'}</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f9f9f9;
-        }
-        h1 { 
-            color: #2c3e50; 
-            border-bottom: 3px solid #3498db; 
-            padding-bottom: 10px; 
-            margin-bottom: 20px;
-        }
-        h2 { 
-            color: #34495e; 
-            border-left: 4px solid #3498db; 
-            padding-left: 10px; 
-            margin: 20px 0 10px 0;
-        }
-        h3 { 
-            color: #34495e; 
-            margin: 15px 0 8px 0;
-        }
-        h4 { 
-            color: #7f8c8d; 
-            margin: 10px 0 5px 0;
-        }
-        ul { 
-            margin: 10px 0; 
-            padding-left: 20px; 
-        }
-        li { 
-            margin: 5px 0; 
-            line-height: 1.4;
-        }
-        .container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 30px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-${bodyContent}
-    </div>
-</body>
-</html>`;
-    };
-
-    const htmlContent = convertMindDataToHTML(mindData);
-
     console.log('Received request to generate HTML');
     console.log('Mind data:', JSON.stringify(mindData, null, 2));
+    console.log('Preview mode:', previewMode);
+    console.log('Update ID:', updateId);
 
+    // 生成HTML内容 - 传入预览模式参数
+    const htmlContent = generatePresentationHTML(mindData, previewMode);
+    
     // 将HTML内容转换为Buffer（blob）
     const htmlBuffer = Buffer.from(htmlContent, 'utf-8');
     console.log('HTML buffer size:', htmlBuffer.length);
@@ -108,15 +29,30 @@ ${bodyContent}
     // 保存到数据库
     try {
       console.log('Attempting to save to database...');
-      const savedRecord = await prisma.mindMapHTML.create({
-        data: {
-          address: address || null, // 可选的钱包地址
-          mindMapData: mindData, // 存储原始思维导图数据
-          htmlBlob: htmlBuffer,
-          published: false, // 明确设置published字段
-        },
-      });
-      console.log('Successfully saved record with ID:', savedRecord.id);
+      let savedRecord;
+      
+      if (updateId && !previewMode) {
+        // 如果是更新模式且不是预览模式，更新现有记录为完整版本
+        savedRecord = await prisma.mindMapHTML.update({
+          where: { id: parseInt(updateId.toString()) },
+          data: {
+            htmlBlob: htmlBuffer,
+            // 不更新其他字段，保持原有的address和mindMapData
+          },
+        });
+        console.log('Successfully updated record with ID:', savedRecord.id);
+      } else {
+        // 创建新记录
+        savedRecord = await prisma.mindMapHTML.create({
+          data: {
+            address: address || null, // 可选的钱包地址
+            mindMapData: mindData as any, // 存储原始思维导图数据
+            htmlBlob: htmlBuffer,
+            published: false, // 明确设置published字段
+          },
+        });
+        console.log('Successfully created new record with ID:', savedRecord.id);
+      }
 
       return NextResponse.json({
         html: htmlContent,

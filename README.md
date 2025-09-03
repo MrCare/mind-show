@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MindShow
 
-## Getting Started
+> AI-powered on-chain DApp that transforms mind maps into beautiful presentations
 
-First, run the development server:
+## 🎯 Project Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+MindShow is an innovative AI-powered on-chain DApp that leverages artificial intelligence to automatically convert mind maps into professional HTML presentations and publishes them on blockchain for content ownership verification. Users pay service fees using MSC (ERC20 tokens) to enjoy decentralized presentation generation and publishing services.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Core Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **AI Smart Conversion** - Utilize AI technology to automatically convert mind maps into structured presentations
+- **Mind Map Editing** - Intuitive mind map creation and editing interface
+- **On-chain Content Publishing** - Publish presentations to blockchain via smart contracts for permanent storage
+- **MSC Token Payment** - Pay for AI generation and publishing services using MSC (ERC20 tokens)
+- **Preview Mode** - Preview first two slides in sandbox environment
+- **Responsive Design** - Perfect adaptation for desktop and mobile devices
+- **Web3 Wallet Integration** - Support multiple Web3 wallets and token transactions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Tech Stack
 
-## Learn More
+- **Frontend**: React 19 + Next.js 15 + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **AI Technology**: Smart content generation and structured processing
+- **Blockchain**: wagmi + Smart Contract Integration
+- **Token System**: MSC (ERC20) Token Payment
+- **Database**: Prisma + PostgreSQL
+- **Deployment**: Vercel
 
-To learn more about Next.js, take a look at the following resources:
+## 📖 Usage Flow
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Connect Wallet** - Connect your Web3 wallet and ensure sufficient MSC tokens
+2. **Create Mind Map** - Use interactive editor to create mind maps
+3. **AI Generate Preview** - Pay MSC tokens to generate AI-powered presentation preview (first 2 slides)
+4. **Publish to Blockchain** - Pay additional MSC tokens to publish complete presentation to blockchain for permanent storage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎨 Key Highlights
 
-## Deploy on Vercel
+- **🤖 AI-Driven Generation** - Leverage advanced AI technology to intelligently analyze mind map structure and generate professional presentations
+- **� MSC Token Economy** - Decentralized payment system based on MSC (ERC20 tokens)
+- **�🔍 Smart Preview** - Cost-effective preview mode showing only title page and first two content slides
+- **📱 Mobile Friendly** - Complete mobile adaptation and touch support
+- **🎯 Hierarchical Display** - AI intelligently recognizes mind map hierarchy and auto-generates structured slides
+- **⚡ Real-time Generation** - Fast AI processing and HTML presentation generation
+- **🔒 On-chain Ownership** - Ensure content ownership and copyright protection through smart contracts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+##  License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+GPL-3.0 License
+
+---
+
+**MindShow - Bring your mind maps to life ✨**
+
+---
+
+📖 [中文版本](./README.zh.md)

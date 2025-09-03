@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 interface PublishButtonProps {
   mindMapId: number | string;
   onPublishSuccess?: () => void;
+  onPublishClick?: () => Promise<void>; // 添加发布前的回调
   disabled?: boolean;
   size?: 'sm' | 'default' | 'lg';
   variant?: 'default' | 'outline' | 'secondary' | 'destructive' | 'ghost';
@@ -22,6 +23,7 @@ interface PublishButtonProps {
 export const PublishButton: React.FC<PublishButtonProps> = ({
   mindMapId,
   onPublishSuccess,
+  onPublishClick,
   disabled = false,
   size = 'default',
   variant = 'default',
@@ -43,6 +45,11 @@ export const PublishButton: React.FC<PublishButtonProps> = ({
 
     setIsPublishing(true);
     try {
+      // 如果有发布前的回调，先执行
+      if (onPublishClick) {
+        await onPublishClick();
+      }
+      
       const result = await publishConfirmation(mindMapId);
       if (result && result.success) {
         onPublishSuccess?.();

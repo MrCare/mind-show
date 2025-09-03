@@ -12,12 +12,13 @@ interface MindMapPreviewProps {
 const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
   const [htmlContent, setHtmlContent] = useState<string>('');
   const [htmlId, setHtmlId] = useState<number | null>(null);
+  const [fullHtmlId, setFullHtmlId] = useState<number | null>(null); // 完整版本的ID
   const [isLoading, setIsLoading] = useState(false);
   const previewRef = useRef<HTMLIFrameElement>(null);
   const { address } = useAccount();
 
   // 生成HTML内容
-  const generateHTML = async () => {
+  const generateHTML = async (isPreview: boolean = true) => {
     if (!mindMapInstance) {
       setHtmlContent('<p>Mind map not available</p>');
       return;
@@ -37,7 +38,8 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
         },
         body: JSON.stringify({ 
           mindData,
-          address: address || null // 传入当前钱包地址
+          address: address || null, // 传入当前钱包地址
+          previewMode: isPreview // 添加预览模式参数
         }),
       });
 
@@ -48,8 +50,13 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
       const result = await response.json();
       
       if (result.success) {
-        setHtmlContent(result.html);
-        setHtmlId(result.id);
+        if (isPreview) {
+          setHtmlContent(result.html);
+          setHtmlId(result.id);
+        } else {
+          // 为发布生成完整版本
+          setFullHtmlId(result.id);
+        }
         console.log('HTML saved with ID:', result.id);
       } else {
         throw new Error(result.error || 'Unknown error');
@@ -68,6 +75,49 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
     // 可以在这里添加更多成功后的逻辑，比如更新UI状态
   };
 
+  // 处理发布按钮点击
+  const handlePublishClick = async () => {
+    if (!mindMapInstance) return;
+    
+    try {
+      setIsLoading(true);
+      // 获取思维导图数据
+      const mindData = mindMapInstance.getData();
+      
+      // 更新现有记录为完整版本（非预览模式）
+      const response = await fetch('/api/generate-html', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          mindData,
+          address: address || null,
+          previewMode: false, // 生成完整版本
+          updateId: htmlId // 更新现有的预览记录
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate full version');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log('Full version updated for ID:', result.id);
+        // 更新fullHtmlId以便PublishButton使用
+        setFullHtmlId(result.id);
+      } else {
+        throw new Error(result.error || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Error generating full version:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Card className="w-full h-full flex flex-col p-0 gap-0">
       <CardHeader className="flex-shrink-0 pb-2 px-3 pt-3">
@@ -76,32 +126,35 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
           <div className="flex gap-1">
             {!htmlContent ? (
               <Button 
-                onClick={generateHTML} 
-                disabled={isLoading}
+                onClick={() => generateHTML(true)} 
+                disabled={isLoading || !address}
                 variant="default"
                 size="sm"
-                className="h-7 px-2 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="h-7 px-2 text-xs bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                title={!address ? 'Please connect your wallet first' : ''}
               >
-                {isLoading ? 'Generating...' : 'Generate'}
+                {isLoading ? 'Generating...' : !address ? 'Connect Wallet to Generate' : 'Generate Preview'}
               </Button>
             ) : (
               <>
                 <Button 
-                  onClick={generateHTML} 
-                  disabled={isLoading}
+                  onClick={() => generateHTML(true)} 
+                  disabled={isLoading || !address}
                   variant="outline"
                   size="sm"
-                  className="h-7 px-2 text-xs border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  className="h-7 px-2 text-xs border-primary text-primary hover:bg-primary hover:text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={!address ? 'Please connect your wallet first' : ''}
                 >
-                  {isLoading ? 'Generating...' : 'Regenerate'}
+                  {isLoading ? 'Generating...' : 'Regenerate Preview'}
                 </Button>
                 {htmlId && (
                   <PublishButton
-                    mindMapId={htmlId}
+                    mindMapId={fullHtmlId || htmlId} // 优先使用完整版本ID
                     onPublishSuccess={handlePublishSuccess}
                     disabled={isLoading}
                     size="sm"
                     variant="default"
+                    onPublishClick={handlePublishClick} // 添加发布前的处理
                   />
                 )}
               </>
@@ -118,7 +171,7 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
                 ref={previewRef}
                 className="w-full h-full border bg-white rounded"
                 srcDoc={htmlContent}
-                sandbox="allow-same-origin"
+                sandbox="allow-same-origin allow-scripts"
               />
             </div>
           </div>
@@ -142,7 +195,11 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
             <div className="text-center space-y-2">
               <h3 className="text-sm font-medium text-slate-700">No Preview Available</h3>
               <p className="text-xs text-slate-500 max-w-48 leading-relaxed">
-                Click the <span className="font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">&quot;Generate&quot;</span> button above to convert your mind map into a beautiful HTML presentation
+                {!address ? (
+                  <>Connect your wallet first, then click the <span className="font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">&quot;Generate&quot;</span> button to convert your mind map into a beautiful HTML presentation</>
+                ) : (
+                  <>Click the <span className="font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">&quot;Generate&quot;</span> button above to convert your mind map into a beautiful HTML presentation</>
+                )}
               </p>
             </div>
           </div>
