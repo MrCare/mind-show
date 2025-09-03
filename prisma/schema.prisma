@@ -15,11 +15,14 @@ datasource db {
 }
 
 model MindMapHTML {
-  id        String   @id @default(cuid())
-  address   String?  // 用于绑定用户钱包地址
-  htmlBlob  Bytes    // 存储HTML内容的blob字段
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  address         String?  // 用于绑定用户钱包地址
+  mindMapData     Json?    // 存储思维导图原始数据
+  htmlBlob        Bytes    // 存储HTML内容的blob字段
+  published       Boolean  @default(false) // 是否发布
+  transactionHash String?  // 区块链交易哈希
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@map("mindmap_html")
 }

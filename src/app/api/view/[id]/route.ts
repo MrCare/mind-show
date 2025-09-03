@@ -12,15 +12,27 @@ export async function GET(
   try {
     const { id } = await context.params;
 
+    // 将字符串ID转换为数字
+    const numericId = parseInt(id, 10);
+    
+    if (isNaN(numericId)) {
+      return new NextResponse('Invalid ID format', { status: 400 });
+    }
+
     // 从数据库获取HTML内容
     const record = await prisma.mindMapHTML.findUnique({
       where: {
-        id: id,
+        id: numericId,
       },
     });
 
     if (!record) {
       return new NextResponse('HTML not found', { status: 404 });
+    }
+
+    // 检查是否已发布，如果未发布则不允许访问
+    if (!record.published) {
+      return new NextResponse('This mind map has not been published yet', { status: 403 });
     }
 
     // 将Buffer转换回字符串

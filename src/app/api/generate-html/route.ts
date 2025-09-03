@@ -98,27 +98,46 @@ ${bodyContent}
 
     const htmlContent = convertMindDataToHTML(mindData);
 
+    console.log('Received request to generate HTML');
+    console.log('Mind data:', JSON.stringify(mindData, null, 2));
+
     // 将HTML内容转换为Buffer（blob）
     const htmlBuffer = Buffer.from(htmlContent, 'utf-8');
+    console.log('HTML buffer size:', htmlBuffer.length);
 
     // 保存到数据库
-    const savedRecord = await prisma.mindMapHTML.create({
-      data: {
-        address: address || null, // 可选的钱包地址
-        htmlBlob: htmlBuffer,
-      },
-    });
+    try {
+      console.log('Attempting to save to database...');
+      const savedRecord = await prisma.mindMapHTML.create({
+        data: {
+          address: address || null, // 可选的钱包地址
+          mindMapData: mindData, // 存储原始思维导图数据
+          htmlBlob: htmlBuffer,
+          published: false, // 明确设置published字段
+        },
+      });
+      console.log('Successfully saved record with ID:', savedRecord.id);
 
-    return NextResponse.json({
-      html: htmlContent,
-      id: savedRecord.id,
-      success: true
-    });
+      return NextResponse.json({
+        html: htmlContent,
+        id: savedRecord.id,
+        success: true
+      });
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+      throw dbError;
+    }
 
   } catch (error) {
-    console.error('Error generating HTML:', error);
+    console.error('Detailed error generating HTML:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('Error message:', error instanceof Error ? error.message : String(error));
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }

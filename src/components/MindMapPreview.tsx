@@ -2,6 +2,8 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PublishButton } from './PublishButton';
+import { useAccount } from 'wagmi';
 
 interface MindMapPreviewProps {
   mindMapInstance?: any;
@@ -9,9 +11,10 @@ interface MindMapPreviewProps {
 
 const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
   const [htmlContent, setHtmlContent] = useState<string>('');
-  const [htmlId, setHtmlId] = useState<string | null>(null);
+  const [htmlId, setHtmlId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const previewRef = useRef<HTMLIFrameElement>(null);
+  const { address } = useAccount();
 
   // 生成HTML内容
   const generateHTML = async () => {
@@ -32,7 +35,10 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ mindData }),
+        body: JSON.stringify({ 
+          mindData,
+          address: address || null // 传入当前钱包地址
+        }),
       });
 
       if (!response.ok) {
@@ -56,36 +62,27 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
     }
   };
 
-  // 发布HTML内容
-  const publishHTML = () => {
-    if (htmlId) {
-      // 生成查看链接
-      const viewUrl = `/api/view/${htmlId}`;
-      
-      // 在新窗口中打开查看页面
-      window.open(viewUrl, '_blank');
-      
-      console.log('Publishing HTML with ID:', htmlId);
-      console.log('View URL:', viewUrl);
-    } else {
-      alert('Please generate HTML first');
-    }
+  // 发布成功的回调函数
+  const handlePublishSuccess = () => {
+    console.log('Mind map published to blockchain successfully!');
+    // 可以在这里添加更多成功后的逻辑，比如更新UI状态
   };
 
   return (
-    <Card className="w-full h-full flex flex-col">
-      <CardHeader className="flex-shrink-0">
+    <Card className="w-full h-full flex flex-col p-0 gap-0">
+      <CardHeader className="flex-shrink-0 pb-2 px-3 pt-3">
         <CardTitle className="flex items-center justify-between text-sm">
-          Mind Map HTML Preview
-          <div className="flex gap-2">
+          Presentation Preview
+          <div className="flex gap-1">
             {!htmlContent ? (
               <Button 
                 onClick={generateHTML} 
                 disabled={isLoading}
                 variant="outline"
                 size="sm"
+                className="h-7 px-2 text-xs"
               >
-                {isLoading ? 'Generating...' : 'Generate HTML'}
+                {isLoading ? 'Generating...' : 'Generate'}
               </Button>
             ) : (
               <>
@@ -94,42 +91,40 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
                   disabled={isLoading}
                   variant="outline"
                   size="sm"
+                  className="h-7 px-2 text-xs"
                 >
                   {isLoading ? 'Generating...' : 'Regenerate'}
                 </Button>
-                <Button 
-                  onClick={publishHTML} 
-                  variant="default"
-                  size="sm"
-                >
-                  Publish
-                </Button>
+                {htmlId && (
+                  <PublishButton
+                    mindMapId={htmlId}
+                    onPublishSuccess={handlePublishSuccess}
+                    disabled={isLoading}
+                    size="sm"
+                    variant="default"
+                  />
+                )}
               </>
             )}
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col overflow-hidden">
+      <CardContent className="flex-1 flex flex-col overflow-hidden p-3 pt-0">
         {htmlContent ? (
           <div className="h-full flex flex-col">
-            {/* HTML 预览区域 - 固定高度，防止布局被破坏 */}
+            {/* HTML 预览区域 */}
             <div className="flex-1 min-h-0">
-              <div className="text-xs text-gray-500 mb-2">HTML Preview:</div>
               <iframe
                 ref={previewRef}
-                className="w-full h-full border rounded-lg bg-white"
+                className="w-full h-full border bg-white rounded"
                 srcDoc={htmlContent}
-                style={{
-                  minHeight: '300px',
-                  maxHeight: 'calc(100% - 16px)', // 减去预览区域的高度100%
-                }}
                 sandbox="allow-same-origin"
               />
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">
-            Click &quot;Generate HTML&quot; to convert your mind map to HTML format
+          <div className="flex-1 flex items-center justify-center text-gray-500 text-xs">
+            Click &quot;Generate&quot; to convert your mind map to HTML format
           </div>
         )}
       </CardContent>
