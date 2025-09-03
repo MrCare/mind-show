@@ -147,24 +147,22 @@ export const useConfirmation = () => {
   };
 
   // 获取确认信息
-  const getConfirmation = async (id: number | string) => {
-    try {
-      const result = await useReadContract({
-        address: CONFIRMATION_ADDRESS,
-        abi: CONFIRMATION_ABI,
-        functionName: 'getConfirmation',
-        args: [BigInt(id)],
-      });
-      return result;
-    } catch (error) {
-      console.error('Error getting confirmation:', error);
-      return null;
-    }
+  // 获取确认信息的hook
+  const useGetConfirmation = (id: number | string | null) => {
+    return useReadContract({
+      address: CONFIRMATION_ADDRESS,
+      abi: CONFIRMATION_ABI,
+      functionName: 'getConfirmation',
+      args: id ? [BigInt(id)] : undefined,
+      query: {
+        enabled: !!id,
+      },
+    });
   };
 
   return {
     publishConfirmation,
-    getConfirmation,
+    useGetConfirmation,
     confirmationFee,
     isReady: !!(address && chainId && confirmationFee && tokenName && tokenVersion && userNonce !== undefined),
   };

@@ -4,6 +4,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export const CustomConnectButton = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -110,9 +111,11 @@ const CustomConnectButtonContent = () => {
                         className="sm:w-5 sm:h-5 sm:mr-1"
                       >
                         {chain.iconUrl && (
-                          <img
+                          <Image
                             alt={chain.name ?? 'Chain icon'}
                             src={chain.iconUrl}
+                            width={20}
+                            height={20}
                             style={{ width: '100%', height: '100%' }}
                           />
                         )}
