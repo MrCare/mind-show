@@ -78,9 +78,9 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
               <Button 
                 onClick={generateHTML} 
                 disabled={isLoading}
-                variant="outline"
+                variant="default"
                 size="sm"
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 {isLoading ? 'Generating...' : 'Generate'}
               </Button>
@@ -91,7 +91,7 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
                   disabled={isLoading}
                   variant="outline"
                   size="sm"
-                  className="h-7 px-2 text-xs"
+                  className="h-7 px-2 text-xs border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 >
                   {isLoading ? 'Generating...' : 'Regenerate'}
                 </Button>
@@ -123,8 +123,28 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500 text-xs">
-            Click &quot;Generate&quot; to convert your mind map to HTML format
+          <div className="flex-1 flex flex-col items-center justify-center space-y-4 p-8">
+            <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-primary/20 rounded-full flex items-center justify-center shadow-sm">
+              <svg 
+                className="w-8 h-8 text-primary" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={1.5} 
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                />
+              </svg>
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-sm font-medium text-slate-700">No Preview Available</h3>
+              <p className="text-xs text-slate-500 max-w-48 leading-relaxed">
+                Click the <span className="font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">&quot;Generate&quot;</span> button above to convert your mind map into a beautiful HTML presentation
+              </p>
+            </div>
           </div>
         )}
       </CardContent>
