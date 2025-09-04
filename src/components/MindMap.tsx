@@ -160,37 +160,37 @@ const MindMap = forwardRef<MindMapRef, MindMapProps>(({ onInstanceReady, initial
     const exampleData = {
       nodeData: {
         id: "root",
-        topic: "Show Me Your Mind",
+        topic: "mindShow [ 思现 ]",
         root: true,
         children: [
           {
-            id: "work",
-            topic: "Work Projects",
+            id: "problem",
+            topic: "problem [ 聚焦问题 ]",
             direction: 0,
             children: [
-              { id: "project1", topic: "Web Development", direction: 0 },
-              { id: "project2", topic: "Mobile App", direction: 0 },
-              { id: "project3", topic: "Data Analysis", direction: 0 }
+              { id: "mind", topic: "mindmap fast but skeleton [思维导图快但太骨感]", direction: 0 },
+              { id: "ppt", topic: "ppt need thinking well and slow [PPT需要好好思考而且慢]", direction: 0 },
+              { id: "idea", topic: "idea diffcult to be protection [想法难以保护]", direction: 0 }
             ]
           },
           {
-            id: "learning",
-            topic: "Learning Plan",
+            id: "solve",
+            topic: "solve [ 解决方案 ]",
             direction: 1,
             children: [
-              { id: "skill1", topic: "Frontend Tech", direction: 1 },
-              { id: "skill2", topic: "Backend Dev", direction: 1 },
-              { id: "skill3", topic: "AI/ML", direction: 1 }
+              { id: "mindToHtml", topic: "AI based mindmap to beautiful presentation [思维导图转美观的演示文稿]", direction: 1 },
+              { id: "easy", topic: "easy carry / share / permanent [轻松携带/分享/永久保存]", direction: 1 },
+              { id: "onChain", topic: "Hash on chain / never gone [ idea hash上链确权 ]", direction: 1 }
             ]
           },
           {
-            id: "personal",
-            topic: "Personal Goals",
+            id: "tech",
+            topic: "Technical Skills [ 技术亮点 ]",
             direction: 0,
             children: [
-              { id: "goal1", topic: "Healthy Living", direction: 0 },
-              { id: "goal2", topic: "Reading Plan", direction: 0 },
-              { id: "goal3", topic: "Travel Plans", direction: 0 }
+              { id: "full platform tool", topic: "Full Platform Tool: phone / pad / laptop [ 全平台工具]", direction: 0 },
+              { id: "AI", topic: "powerful AI make sure beauty [强大的AI保证美观]", direction: 0 },
+              { id: "MSC Token", topic: "MSC token serve [MSC 结算 可用 UniSwap 兑换]", direction: 0 }
             ]
           }
         ]
