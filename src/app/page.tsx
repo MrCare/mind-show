@@ -112,7 +112,7 @@ const HomeContent: React.FC = () => {
         </div>
         
         {/* HTML Preview 部分 */}
-        <div className="w-full lg:w-1/2 bg-white dark:bg-gray-900 flex flex-col overflow-hidden p-4">
+        <div className="w-full lg:w-1/2 flex flex-col overflow-hidden p-4">
           <MindMapPreview mindMapInstance={mindMapInstance} />
         </div>
       </div>
@@ -130,7 +130,7 @@ export default function Home() {
             <div className="flex-1 flex overflow-hidden">
               <MindMapSkeleton />
             </div>
-            <div className="w-full lg:w-1/2 bg-white dark:bg-gray-900 flex flex-col overflow-hidden p-4">
+            <div className="w-full lg:w-1/2 flex flex-col overflow-hidden p-4">
               <MindMapPreviewSkeleton />
             </div>
           </div>

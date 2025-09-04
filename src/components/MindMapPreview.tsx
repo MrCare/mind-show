@@ -63,7 +63,7 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
       }
     } catch (error) {
       console.error('Error generating HTML:', error);
-      setHtmlContent('<p>Error generating HTML from mind map</p>');
+      setHtmlContent('__ERROR__'); // 用特殊标记表示错误
     } finally {
       setIsLoading(false);
     }
@@ -163,7 +163,7 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col overflow-hidden p-3 pt-0">
-        {htmlContent ? (
+        {htmlContent && htmlContent !== '__ERROR__' ? (
           <div className="h-full flex flex-col">
             {/* HTML 预览区域 */}
             <div className="flex-1 min-h-0">
@@ -193,12 +193,18 @@ const MindMapPreview: React.FC<MindMapPreviewProps> = ({ mindMapInstance }) => {
               </svg>
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-sm font-medium text-slate-700">No Preview Available</h3>
+              <h3 className="text-sm font-medium text-slate-700">
+                {htmlContent === '__ERROR__' ? 'Error Generating Preview' : 'No Preview Available'}
+              </h3>
               <p className="text-xs text-slate-500 max-w-48 leading-relaxed">
-                {!address ? (
-                  <>Connect your wallet first, then click the <span className="font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">&quot;Generate&quot;</span> button to convert your mind map into a beautiful HTML presentation</>
+                {htmlContent === '__ERROR__' ? (
+                  <>Failed to generate HTML from mind map. Please try again or check your data.</>
                 ) : (
-                  <>Click the <span className="font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">&quot;Generate&quot;</span> button above to convert your mind map into a beautiful HTML presentation</>
+                  !address ? (
+                    <>Connect your wallet first, then click the <span className="font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">&quot;Generate&quot;</span> button to convert your mind map into a beautiful HTML presentation</>
+                  ) : (
+                    <>Click the <span className="font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">&quot;Generate&quot;</span> button above to convert your mind map into a beautiful HTML presentation</>
+                  )
                 )}
               </p>
             </div>
